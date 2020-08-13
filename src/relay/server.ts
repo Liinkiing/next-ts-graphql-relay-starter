@@ -1,6 +1,7 @@
-import { RelayNetworkLayer, urlMiddleware } from 'react-relay-network-modern/node8'
+import { RelayNetworkLayer } from 'react-relay-network-modern/node8'
 import { Environment, RecordSource, Store } from 'relay-runtime'
 import { RecordMap } from 'relay-runtime/lib/store/RelayStoreTypes'
+import { urlMiddleware } from '~/relay/middlewares'
 
 const initEnvironment = () => {
   const source = new RecordSource()
@@ -9,26 +10,18 @@ const initEnvironment = () => {
   return {
     environment: new Environment({
       store,
-      network: new RelayNetworkLayer([
-        urlMiddleware({
-          url: _ => process.env.NEXT_PUBLIC_GRAPHQL_API,
-        }),
-      ]),
+      network: new RelayNetworkLayer([urlMiddleware]),
     }),
   }
 }
 
-const createEnvironment = (records: RecordMap) => {
-  const source = new RecordSource(records)
+const createEnvironment = (relayRecords: RecordMap) => {
+  const source = new RecordSource(relayRecords)
   const store = new Store(source)
 
   return new Environment({
     store,
-    network: new RelayNetworkLayer([
-      urlMiddleware({
-        url: _ => process.env.NEXT_PUBLIC_GRAPHQL_API,
-      }),
-    ]),
+    network: new RelayNetworkLayer([urlMiddleware]),
   })
 }
 

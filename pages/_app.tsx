@@ -10,7 +10,7 @@ import { createEnvironment } from '~/relay'
 import { RelayEnvironmentProvider } from 'react-relay/hooks'
 
 const App: React.FC<AppProps> = ({ Component, pageProps, router }) => {
-  const environment = useMemo(() => createEnvironment(pageProps.records), [pageProps.records])
+  const environment = useMemo(() => createEnvironment(pageProps.relayRecords), [pageProps.relayRecords])
   return (
     <React.StrictMode>
       <RelayEnvironmentProvider environment={environment}>

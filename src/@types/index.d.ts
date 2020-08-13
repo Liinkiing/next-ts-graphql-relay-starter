@@ -1,5 +1,5 @@
 import { RecordMap } from 'relay-runtime/lib/store/RelayStoreTypes'
 
-export interface WithRecords {
-  readonly records?: RecordMap
+export interface WithRelayRecords {
+  readonly relayRecords?: RecordMap
 }

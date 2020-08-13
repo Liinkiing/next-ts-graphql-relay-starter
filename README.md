@@ -54,6 +54,85 @@ so normally your editor should pick the TypeScript definitions and you should ha
 Based on this and your graphql template literals in the `src` and `pages` folder, it will auto generate
 corresponding the corresponding types.
 
+### SSR / SSG
+
+If you wanna use SSR / SSG, you can use for exemple the `getStaticProps` from Next to load some data
+and inject them in your Relay store. By default, this template assumes that we should pre populate the store in
+the client side when a prop named `relayRecords` is set, for exemple in getStaticProps. Then, you could for
+exemple use a `QueryRenderer` from Relay, and set the **fetchPolicy** to `store-and-network` so when the client
+mount the application, the store of Relay will be populated (it's done in the `_app.tsx` file) by what you've put here.
+In the server side / build side, you could use something like this
+
+```typescript jsx
+// pages/index.tsx
+import { GetStaticProps, NextPage } from 'next'
+import { QueryRenderer } from 'react-relay'
+import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay/hooks'
+// The bottom line imports what Relay compiler generate
+import { pages_indexQuery } from '~/__generated__/pages_indexQuery.graphql'
+import { initEnvironment } from '~/relay'
+import { WithRelayRecords } from '~/@types'
+import StarWarsList from '~/components/StarWarsList'
+
+const QUERY = graphql`
+  # The relay compiler forces you to have some particular namings. Next pages
+  # must begin with pages_<your_module_name> or Relay will throw an error
+
+  query pages_indexQuery {
+    allFilms {
+      ...StarWarsList_films
+    }
+  }
+`
+
+const Index: NextPage = () => {
+  const environment = useRelayEnvironment()
+  return (
+    <div>
+      <QueryRenderer<pages_indexQuery>
+        variables={{}}
+        fetchPolicy="store-and-network"
+        environment={environment}
+        query={QUERY}
+        render={({ error, props }) => {
+          if (error) return <div>{error.message}</div>
+          else if (props && props.allFilms) return <StarWarsList films={props.allFilms} />
+          return <div>Loading...</div>
+        }}
+      />
+    </div>
+  )
+}
+
+export const getStaticProps: GetStaticProps<WithRelayRecords> = async () => {
+  const { environment } = initEnvironment()
+
+  await fetchQuery(environment, QUERY, {}).toPromise()
+
+  // This is what the _app.tsx will use to populate the initial Relay store.
+  // Thanks to this and the "store-and-network" policy, when the page will be
+  // mounted on the client-side, Relay will already have the data in it's store
+  // so there will be no loading and it will be prerendered on your page, so
+  // it may be useful if your page have some data requirements / SEO that needs
+  // to be rendered on the server
+  const records = environment.getStore().getSource().toJSON()
+
+  return {
+    props: {
+      records,
+    },
+  }
+}
+
+export default Index
+```
+
+A very small exemple application using this starter with Relay and proper TypeScript
+typings can be found here: https://github.com/Liinkiing/ts-test-relay-next, because it
+may be hard to guess what types to use, for example when using fragments, or that `QueryRenderer` is a React
+component that accept a generic type, so you can write this in your JSX to have proper
+typings `<QueryRenderer<pages_indexQuery>>...</QueryRenderer>`
+
 ### Configuration
 
 All configuration related files are located in the `relay.config.js` file

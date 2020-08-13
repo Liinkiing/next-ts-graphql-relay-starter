@@ -1,18 +1,19 @@
-import React from 'react'
-import App from 'next/app'
+import React, { useMemo } from 'react'
+import { AppProps } from 'next/app'
 import NProgress from '~/components/NProgress'
 import AppNav from '~/components/layout/AppNav'
 import { AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from 'styled-components'
 import GlobalStyle from '~/styles/global'
 import { light } from '~/styles/themes'
+import { createEnvironment } from '~/relay'
+import { RelayEnvironmentProvider } from 'react-relay/hooks'
 
-class MyApp extends App {
-  render() {
-    const { Component, pageProps, router } = this.props
-
-    return (
-      <React.StrictMode>
+const App: React.FC<AppProps> = ({ Component, pageProps, router }) => {
+  const environment = useMemo(() => createEnvironment(pageProps.records), [pageProps.records])
+  return (
+    <React.StrictMode>
+      <RelayEnvironmentProvider environment={environment}>
         <ThemeProvider theme={light}>
           <GlobalStyle />
           <NProgress color={light.colors.primary} spinner={false} />
@@ -21,9 +22,9 @@ class MyApp extends App {
             <Component {...pageProps} key={router.route} />
           </AnimatePresence>
         </ThemeProvider>
-      </React.StrictMode>
-    )
-  }
+      </RelayEnvironmentProvider>
+    </React.StrictMode>
+  )
 }
 
-export default MyApp
+export default App

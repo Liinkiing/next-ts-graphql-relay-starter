@@ -1,7 +1,7 @@
-# Next GraphQL Apollo Starter
+# Next GraphQL Relay Starter
 
 A starter to bootstrap your **Next** application (nice pun gg) with some noice GraphQL
-(**🎊 With SSR support 🎊**) with Apollo and [GraphQL code generator](https://graphql-code-generator.com/)
+(**🎊 With SSR/SSG support 🎊**) with Relay
 
 ## Usage
 
@@ -10,12 +10,12 @@ $ yarn
 # install dependencies
 
 $ yarn dev
-# launch concurrently gql-gen:watch and dev:next
+# launch concurrently relay:watch and dev:next
 
-$ yarn gql-gen
-# launch GraphQL code generation based on codegen.yaml
+$ yarn relay
+# launch Relay code generation based on your graphql`` template literals
 
-$ yarn gql-gen:watch
+$ yarn relay:watch
 # same as above, with watch mode
 
 $ yarn dev:next
@@ -39,158 +39,27 @@ $ yarn lint
 
 ## GraphQL support
 
-The starter comes by default with Apollo@3. All Apollo related code and config is located under `~/apollo` folder. It contains
-the **HOC** `withApollo` and the client.
+The starter comes by default with Relay. All Relay related code and config is located under `~/relay` folder. It contains a
+relay environment for the client and the server. The `~/relay/index.ts` file choose the appropriate
+environment based on the execution context (server side / client)
 It uses environment variables to define the API endpoint, so you have to copy/paste the `.env.sample`
 file and rename it to `.env` (not committed). The variable name is `NEXT_PUBLIC_GRAPHQL_API`
 
-To make the codegen work, you must have a `schema.graphql` at the root (can be
-modified in the `codegen.yaml`, see [the configuration reference](https://graphql-code-generator.com/docs/getting-started/codegen-config)).
-Based on this and your \*.graphql files in `~/graphql/**`, it will auto generate
-corresponding hooks.
+To make the relay compiler work, you must have a `schema.graphql` at the root (can be
+modified in the `relay.config.js`, see [the configuration reference](https://relay.dev/docs/en/installation-and-setup#set-up-relay-with-a-single-config-file)).
 
-When writing \*.graphql files, you can also import other \*.graphql files by using
-comments
+I have annotated the file with a `/** @type {import('@types/relay-compiler/lib/bin/RelayCompilerMain').Config} */` jsdoc,
+so normally your editor should pick the TypeScript definitions and you should have autocomplete on the configuration file.
 
-`~/graphql/fragments/ProjectCard_project.graphql`
-
-```graphql
-fragment ProjectCard_project on Project {
-  title
-  body
-}
-```
-
-`~/graphql/queries/Projects.graphql`
-
-```graphql
-#import '~/graphql/fragments/ProjectCard_project.graphql'
-
-query Projects {
-  projects {
-    id
-    ...ProjectCard_project
-  }
-}
-```
-
-### withApollo HOC
-
-The starter comes with a `withApollo` HOC, [taken from here ](https://github.com/zeit/next.js/tree/canary/examples/with-apollo) and
-modified it a bit. It must be used within your **Next pages**, otherwise the
-Apollo Context will not exist. You can customize it's behaviour by providing
-a second optional parameter: `{ ssr: boolean }` (defaulted to `{ ssr: false }`)
-
-```tsx
-import { NextPage } from 'next'
-import AppHead from '~/components/AppHead'
-import Page from '~/components/layout/Page'
-import AppBox from '~/ui/AppBox'
-import Heading from '~/ui/typography/Heading'
-import { withApollo } from '~/apollo'
-import { useHelloQuery } from '~/__generated__/hooks'
-
-const Index: NextPage = () => {
-  const { data, error } = useHelloQuery()
-  // No need to wait for the loading to be finished when using ssr: true
-  // it will be already available on the first render on the client when the request
-  // is made from the server. If you navigate to this page within the router client,
-  // you may still need to handle loading state to avoid flickerings
-  if (error) {
-    return <div>Error</div>
-  }
-  return (
-    <Page>
-      <AppHead title="Homepage" />
-      <Heading as="h1">Index Page</Heading>
-      <AppBox mt={2}>
-        <ul>
-          {data.projects.map(p => (
-            <li>{p.id}</li>
-          ))}
-        </ul>
-      </AppBox>
-    </Page>
-  )
-}
-
-export default withApollo(Index, { ssr: true })
-// Warning, when using ssr: true, you loose
-// NextJS Automatic Static Optimization because the page must
-// be rendered in the server to collect the GraphQL queries within
-// your React tree
-```
-
-It works by actually using the [getDataFromTree](https://www.apollographql.com/docs/react/performance/server-side-rendering/#using-getdatafromtree) from `@apollo/react-ssr`.
-When using `withApollo`, if ssr is true, the server will render your React Application, starting
-from the lowest children and going back up to your top most component in your hierarchy.
-By doing it this way, it can collect all the queries needed for your page to render, then
-it uses the `getDataFromTree` to get the hydrated tree of your app with the queries executed,
-and then it populates the store of the client with these queries to have a synced store
-with the queries that has been executed on the server.
-If ssr is not true, it will do nothing on the server (thus, enabling Automatic Static Optimization)
-and do the loading in the client-side. It is why that when using `ssr: true`, you don't have to,
-for the first render, manage the loading state in your client, because the data will
-already be available.
+Based on this and your graphql template literals in the `src` and `pages` folder, it will auto generate
+corresponding the corresponding types.
 
 ### Configuration
 
-All configuration related files are located in the `codegen.yaml` file ([more informations here](https://graphql-code-generator.com/docs/getting-started/codegen-config))
+All configuration related files are located in the `relay.config.js` file
 A `.graphqlconfig` file is also provided, if you use a GraphQL extension in your IDE, it will allow you
 to introspect the schema of a given endpoint and writing it in a `schema.graphql` file.
 You must enter your API url here
-
-### Examples
-
-Example usage for a given query
-
-```graphql
-query Projects {
-  projects {
-    id
-    title
-    body
-  }
-}
-```
-
-which generate a hook and a component and could be used like this :
-
-```typescript jsx
-import React, { FC } from 'react'
-import { useHelloQuery } from '~/__generated__/hooks' // This file is generated by gql-codegen
-
-const Projects: FC = () => {
-  const { data, loading, error } = useHelloQuery()
-  if (error) {
-    return <div>Error</div>
-  }
-  if (loading) {
-    return <div>Loading...</div>
-  }
-  if (data) {
-    // ...
-  }
-
-  return null
-}
-
-const App: FC = () => {
-  return (
-    <div className="App">
-      <main>
-        <Projects />
-      </main>
-    </div>
-  )
-}
-
-export default App
-```
-
-and you get all the nice **autocompletion** from your IDE thanks to Typescript!
-And if you change any of \*.graphql files to add a new field for a GraphQL query,
-it will be automatically generated and you will be always in sync with your GraphQL files!
 
 ## Next config
 

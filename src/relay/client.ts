@@ -18,7 +18,7 @@ const createEnvironment = (records: RecordMap): Environment => {
     network: new RelayNetworkLayer([
       cacheMiddleware({
         size: 100,
-        ttl: 60 * 1000,
+        ttl: 60 * 1000 * 30, // 30 minutes
       }),
       urlMiddleware({
         url: _ => process.env.NEXT_PUBLIC_GRAPHQL_API,

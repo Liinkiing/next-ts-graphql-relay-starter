@@ -1,5 +1,5 @@
 {
-  "name": "next-ts-starter",
+  "name": "next-ts-graphql-relay-starter",
   "version": "1.0.0",
   "description": "A Next powered starter which include support for Relay with GraphQL, SSR / SSG support, codegen, styled component / system and framer motion",
   "scripts": {
@@ -33,11 +33,11 @@
     "typescript"
   ],
   "repository": {
-    "url": "https://github.com/Liinkiing/next-ts-graphql-relay",
+    "url": "https://github.com/Liinkiing/next-ts-graphql-relay-starter",
     "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/Liinkiing/next-ts-graphql-relay/issues"
+    "url": "https://github.com/Liinkiing/next-ts-graphql-relay-starter/issues"
   },
   "author": "Omar Jbara <omar.jbara2@gmail.com>",
   "dependencies": {

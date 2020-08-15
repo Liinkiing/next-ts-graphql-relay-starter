@@ -1,9 +1,10 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "react", "react-hooks", "prettier"],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "relay", "prettier"],
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
+    "plugin:relay/recommended",
     "plugin:prettier/recommended",
     "prettier/react",
     "prettier/@typescript-eslint"

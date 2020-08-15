@@ -7,7 +7,7 @@
     "relay:watch": "relay-compiler --watch",
     "dev": "concurrently  \"yarn dev:next\" \"yarn relay:watch\" ",
     "dev:next": "next",
-    "prebuild": "gql-gen",
+    "prebuild": "yarn relay",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --cache --fix --report-unused-disable-directives src/**/*.{js,ts,jsx,tsx}",

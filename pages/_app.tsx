@@ -2,14 +2,13 @@ import React, { useMemo } from 'react'
 import { AppProps } from 'next/app'
 import NProgress from '~/components/NProgress'
 import AppNav from '~/components/layout/AppNav'
-import { AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from 'styled-components'
 import GlobalStyle from '~/styles/global'
 import { light } from '~/styles/themes'
 import { createEnvironment } from '~/relay'
 import { RelayEnvironmentProvider } from 'react-relay/hooks'
 
-const App: React.FC<AppProps> = ({ Component, pageProps, router }) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   const environment = useMemo(() => createEnvironment(pageProps.relayRecords), [pageProps.relayRecords])
   return (
     <React.StrictMode>
@@ -18,9 +17,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps, router }) => {
           <GlobalStyle />
           <NProgress color={light.colors.primary} spinner={false} />
           <AppNav />
-          <AnimatePresence exitBeforeEnter initial={false}>
-            <Component {...pageProps} key={router.route} />
-          </AnimatePresence>
+          <Component {...pageProps} />
         </ThemeProvider>
       </RelayEnvironmentProvider>
     </React.StrictMode>

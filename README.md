@@ -71,7 +71,7 @@ import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay/hooks'
 // The bottom line imports what Relay compiler generate
 import { pages_indexQuery } from '~/__generated__/pages_indexQuery.graphql'
 import { initEnvironment } from '~/relay'
-import { WithRelayRecords } from '~/@types'
+import { RelayProps } from '~/@types'
 import StarWarsList from '~/components/StarWarsList'
 
 const QUERY = graphql`
@@ -104,7 +104,7 @@ const Index: NextPage = () => {
   )
 }
 
-export const getStaticProps: GetStaticProps<WithRelayRecords> = async () => {
+export const getStaticProps: GetStaticProps<RelayProps> = async () => {
   const { environment } = initEnvironment()
 
   await fetchQuery(environment, QUERY, {}).toPromise()

@@ -12,12 +12,23 @@ const createEnvironment = (relayRecords: RecordMap): Environment => {
     source = new RecordSource(relayRecords)
     store = new Store(source)
   }
-  if (storeEnvironment) return storeEnvironment
+  if (storeEnvironment) {
+    if (relayRecords) {
+      source = new RecordSource(relayRecords)
+    }
+    storeEnvironment.getStore().publish(source)
+
+    return storeEnvironment
+  }
 
   storeEnvironment = new Environment({
     store,
     network: new RelayNetworkLayer([cacheMiddleware, urlMiddleware]),
   })
+  if (relayRecords) {
+    source = new RecordSource(relayRecords)
+  }
+  storeEnvironment.getStore().publish(source)
 
   return storeEnvironment
 }

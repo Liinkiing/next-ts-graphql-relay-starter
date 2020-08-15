@@ -115,11 +115,11 @@ export const getStaticProps: GetStaticProps<RelayProps> = async () => {
   // so there will be no loading and it will be prerendered on your page, so
   // it may be useful if your page have some data requirements / SEO that needs
   // to be rendered on the server
-  const records = environment.getStore().getSource().toJSON()
+  const relayRecords = environment.getStore().getSource().toJSON()
 
   return {
     props: {
-      records,
+      relayRecords,
     },
   }
 }

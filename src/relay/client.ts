@@ -7,7 +7,7 @@ let store, source
 
 let storeEnvironment = null
 
-const createEnvironment = (relayRecords: RecordMap): Environment => {
+const createEnvironment = (relayRecords?: RecordMap): Environment => {
   if (!store) {
     source = new RecordSource(relayRecords)
     store = new Store(source)

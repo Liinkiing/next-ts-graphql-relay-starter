@@ -15,7 +15,7 @@ const initEnvironment = () => {
   }
 }
 
-const createEnvironment = (relayRecords: RecordMap) => {
+const createEnvironment = (relayRecords?: RecordMap) => {
   const source = new RecordSource(relayRecords)
   const store = new Store(source)
 

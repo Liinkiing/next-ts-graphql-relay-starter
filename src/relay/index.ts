@@ -6,5 +6,5 @@ export const { initEnvironment, createEnvironment } = (typeof window === 'undefi
   : require('./client')
 ).default as {
   initEnvironment: () => { environment: Environment }
-  createEnvironment: (relayRecords: RecordMap) => Environment
+  createEnvironment: (relayRecords?: RecordMap) => Environment
 }

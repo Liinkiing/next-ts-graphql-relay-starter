@@ -6,7 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import GlobalStyle from '~/styles/global'
 import { light } from '~/styles/themes'
 import { createEnvironment } from '~/relay'
-import { RelayEnvironmentProvider } from 'react-relay/hooks'
+import { RelayEnvironmentProvider } from 'relay-hooks'
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   const environment = useMemo(() => createEnvironment(pageProps.relayRecords), [pageProps.relayRecords])

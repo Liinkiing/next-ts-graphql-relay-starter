@@ -67,7 +67,7 @@ In the server side / build side, you could use something like this
 // pages/index.tsx
 import { GetStaticProps, NextPage } from 'next'
 import { QueryRenderer } from 'react-relay'
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay/hooks'
+import { fetchQuery, graphql, useRelayEnvironment } from 'relay-hooks'
 // The bottom line imports what Relay compiler generate
 import { pages_indexQuery } from '~/__generated__/pages_indexQuery.graphql'
 import { initEnvironment } from '~/relay'

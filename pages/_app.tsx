@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react'
 import { AppProps } from 'next/app'
+import React, { useMemo } from 'react'
+import { RelayEnvironmentProvider } from 'relay-hooks'
+import { ThemeProvider } from 'styled-components'
+
 import NProgress from '~/components/NProgress'
 import AppNav from '~/components/layout/AppNav'
-import { ThemeProvider } from 'styled-components'
+import { createEnvironment } from '~/relay'
 import GlobalStyle from '~/styles/global'
 import { light } from '~/styles/themes'
-import { createEnvironment } from '~/relay'
-import { RelayEnvironmentProvider } from 'relay-hooks'
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   const environment = useMemo(() => createEnvironment(pageProps.relayRecords), [pageProps.relayRecords])
